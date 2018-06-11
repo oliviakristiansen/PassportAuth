@@ -25,7 +25,7 @@ router.post('/signup', function (req, res, next) {
     }
   }).spread(function (result, created) {
     if (created) {
-      res.redirect('profile/' + result.UserId)
+      res.redirect('/users/login')
     } else {
       res.send('this user already exists')
     }
@@ -33,10 +33,20 @@ router.post('/signup', function (req, res, next) {
 
 });
 
-router.get('/profile/:id', passport.authenticate('local', {
+router.get('/login', function (req, res, next) {
+  res.render('login');
+});
+
+router.post('/login', passport.authenticate('local', {
   failureRedirect: '/users/login'
 }), function (req, res, next) {
-  if (req.user.UserId === req.params.id) {
+  // console.log(req.user)
+  res.redirect('profile/' + req.user.UserId)
+});
+
+router.get('/profile/:id', passport.authenticate('local'), function (req, res, next) {
+  console.log(req.user);
+  if (req.user.UserId === parseInt(req.params.id)) {
     res.render('profile', {
       FirstName: req.user.firstName,
       LastName: req.user.lastName,
@@ -48,17 +58,5 @@ router.get('/profile/:id', passport.authenticate('local', {
     res.send('This is not your profile')
   }
 });
-
-router.get('/login', function (req, res, next) {
-  res.render('login');
-});
-
-router.post('/login', passport.authenticate('local', {
-  failureRedirect: '/login'
-}), function (req, res, next) {
-  console.log(req.user)
-  res.redirect('profile/' + req.user.UserId)
-})
-
 
 module.exports = router;

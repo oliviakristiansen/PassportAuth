@@ -3,6 +3,7 @@ var router = express.Router();
 const sqlite = require('sqlite3').verbose();
 var models = require('../models');
 const passport = require("passport");
+const connectEnsure = require('connect-ensure-login');
 
 
 /* GET users listing. */
@@ -44,7 +45,7 @@ router.post('/login', passport.authenticate('local', {
   res.redirect('profile/' + req.user.UserId)
 });
 
-router.get('/profile/:id', passport.authenticate('local'), function (req, res, next) {
+router.get('/profile/:id', connectEnsure.ensureLoggedIn(), function (req, res, next) {
   console.log(req.user);
   if (req.user.UserId === parseInt(req.params.id)) {
     res.render('profile', {
@@ -57,6 +58,11 @@ router.get('/profile/:id', passport.authenticate('local'), function (req, res, n
   } else {
     res.send('This is not your profile')
   }
+});
+
+router.get('/logout', function (req, res) {
+  req.logout();
+  res.redirect('/users/login');
 });
 
 module.exports = router;

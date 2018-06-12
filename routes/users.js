@@ -41,12 +41,10 @@ router.get('/login', function (req, res, next) {
 router.post('/login', passport.authenticate('local', {
   failureRedirect: '/users/login'
 }), function (req, res, next) {
-  // console.log(req.user)
   res.redirect('profile/' + req.user.UserId)
 });
 
 router.get('/profile/:id', connectEnsure.ensureLoggedIn(), function (req, res, next) {
-  console.log(req.user);
   if (req.user.UserId === parseInt(req.params.id)) {
     res.render('profile', {
       FirstName: req.user.firstName,

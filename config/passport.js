@@ -36,10 +36,9 @@ passport.use('local', new LocalStrategy(
 
     }));
 
-// passport.use('default', )
 passport.serializeUser((user, cb) => {
     cb(null, user.UserId)
-})
+});
 
 passport.deserializeUser((id, cb) => {
     models.users.findOne({
@@ -48,7 +47,7 @@ passport.deserializeUser((id, cb) => {
         }
     }).then(user => {
         cb(null, user);
-    }).catch(err => {
+    }).catch(err => {;
         cb(err);
     })
 })
